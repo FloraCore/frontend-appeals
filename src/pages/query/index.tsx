@@ -155,47 +155,39 @@ const QueryPage: React.FC = () => {
                 }}
                 onFinish={async () => {
                     const hide = message.loading('确认中...');
-                    // @ts-ignore
-                    const captcha1 = new TencentCaptcha('190231925', async function (res) {
-                        if (res.ret === 0) {
-                            //console.log(res.ticket)
-                            //console.log(res.randstr)
-                            try {
-                                const name = formRef.current?.getFieldValue("username");
-                                const id = formRef.current?.getFieldValue("id");
-                                const params: Appeal.AppealCheckRequest = {
-                                    userName: name,
-                                    id: id
-                                }
-                                const {data} = await checkAppeal({...params})
-                                const appealType = data?.appealType ?? "punish";
-                                const state = data?.state ?? -1;
-                                const uuid = data?.uuid ?? "";
-                                // TODO: 存在潜在的问题，需要进一步调查
-                                const ct = new Date(data?.createTime as any as number);
-                                setUserName(name);
-                                setID(id);
-                                // @ts-ignore
-                                setCreateTime(ct);
-                                setAppealType(appealType);
-                                setState(state);
-                                if (appealType === "punish") {
-                                    await punishData(uuid);
-                                } else {
-                                    await abnormalData(uuid);
-                                }
-                                console.log(photos);
-                                message.success('确认成功！');
-                                return true;
-                            } catch (e: any) {
-                                message.error(e.message);
-                                return false;
-                            } finally {
-                                hide();
-                            }
+                    try {
+                        const name = formRef.current?.getFieldValue("username");
+                        const id = formRef.current?.getFieldValue("id");
+                        const params: Appeal.AppealCheckRequest = {
+                            userName: name,
+                            id: id
                         }
-                    });
-                    captcha1.show();
+                        const {data} = await checkAppeal({...params})
+                        const appealType = data?.appealType ?? "punish";
+                        const state = data?.state ?? -1;
+                        const uuid = data?.uuid ?? "";
+                        // TODO: 存在潜在的问题，需要进一步调查
+                        const ct = new Date(data?.createTime as any as number);
+                        setUserName(name);
+                        setID(id);
+                        // @ts-ignore
+                        setCreateTime(ct);
+                        setAppealType(appealType);
+                        setState(state);
+                        if (appealType === "punish") {
+                            await punishData(uuid);
+                        } else {
+                            await abnormalData(uuid);
+                        }
+                        console.log(photos);
+                        message.success('确认成功！');
+                        return true;
+                    } catch (e: any) {
+                        message.error(e.message);
+                        return false;
+                    } finally {
+                        hide();
+                    }
                 }}
             >
                 <ProFormText

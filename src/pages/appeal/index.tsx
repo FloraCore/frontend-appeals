@@ -98,37 +98,29 @@ const AppealPage: React.FC = () => {
                 }}
                 onFinish={async () => {
                     const hide = message.loading('确认中...');
-                    // @ts-ignore
-                    const captcha1 = new TencentCaptcha('190231925', async function (res) {
-                        if (res.ret === 0) {
-                            //console.log(res.ticket)
-                            //console.log(res.randstr)
-                            try {
-                                const name = formRef.current?.getFieldValue("username");
-                                await checkBlacklist(name);
-                                const {data} = await checkPunish(name);
-                                const type = data?.type;
-                                setUsername(name);
-                                setEmail(formRef.current?.getFieldValue("email"));
-                                message.success('确认成功！');
-                                Modal.info({
-                                    title: "玩家：" + name,
-                                    content: (<div>
-                                        <p>{"处罚类型：" + (type === "ban" ? "封禁" : (type === "mute" ? "禁言" : "未知"))}</p>
-                                        <p>{"处罚原因：" + data?.reason}</p>
-                                        <p>{"处罚ID：#" + data?.id}</p>
-                                    </div>),
-                                });
-                                return true;
-                            } catch (e: any) {
-                                message.error(e.message);
-                                return false;
-                            } finally {
-                                hide();
-                            }
-                        }
-                    });
-                    captcha1.show();
+                    try {
+                        const name = formRef.current?.getFieldValue("username");
+                        await checkBlacklist(name);
+                        const {data} = await checkPunish(name);
+                        const type = data?.type;
+                        setUsername(name);
+                        setEmail(formRef.current?.getFieldValue("email"));
+                        message.success('确认成功！');
+                        Modal.info({
+                            title: "玩家：" + name,
+                            content: (<div>
+                                <p>{"处罚类型：" + (type === "ban" ? "封禁" : (type === "mute" ? "禁言" : "未知"))}</p>
+                                <p>{"处罚原因：" + data?.reason}</p>
+                                <p>{"处罚ID：#" + data?.id}</p>
+                            </div>),
+                        });
+                        return true;
+                    } catch (e: any) {
+                        message.error(e.message);
+                        return false;
+                    } finally {
+                        hide();
+                    }
                 }}
             >
                 <ProFormText
